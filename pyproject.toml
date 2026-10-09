@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "localbucket"
+dynamic = ["version"]
+description = "Minimal S3-compatible server that stores buckets as plain folders on disk, for local development and testing."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Selcuk Ayguney" }]
+keywords = ["s3", "aws", "boto3", "mock", "emulator", "testing", "django"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+]
+dependencies = []
+
+[project.scripts]
+localbucket = "localbucket:main"
+
+[project.urls]
+Homepage = "https://github.com/selcuk/localbucket"
+Issues = "https://github.com/selcuk/localbucket/issues"
+
+[tool.hatch.version]
+path = "localbucket.py"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["localbucket.py"]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["localbucket.py", "test_localbucket.py", "README.md", "LICENSE"]
