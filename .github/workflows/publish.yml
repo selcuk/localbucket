@@ -1,0 +1,42 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Run tests
+        run: uv run --python ${{ matrix.python-version }} test_localbucket.py
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/localbucket/
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Check the tag matches the version
+        run: |
+          version="$(python3 localbucket.py --version)"
+          if [ "$version" != "LocalBucket ${GITHUB_REF_NAME#v}" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match $version"
+            exit 1
+          fi
+      - name: Build
+        run: uv build
+      - name: Publish
+        run: uv publish
